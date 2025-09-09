@@ -1,0 +1,55 @@
+{
+  "name": "image-processing-app",
+  "version": "1.0.0",
+  "description": "A comprehensive web-based image processing application with multi-format support, real-time compression, rotation, and processing pipeline with undo/redo functionality.",
+  "main": "index.html",
+  "scripts": {
+    "start": "http-server -p 8000 -c-1",
+    "dev": "http-server -p 8000 -c-1 -o",
+    "serve": "python -m http.server 8000",
+    "install-deps": "curl -o lib/heic2any.min.js https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js",
+    "test": "echo 'Open http://localhost:8000 in your browser to test the application'",
+    "build": "echo 'No build step required - this is a client-side application'"
+  },
+  "keywords": [
+    "image-processing",
+    "canvas",
+    "javascript",
+    "web-app",
+    "image-compression",
+    "image-rotation",
+    "multi-format",
+    "heif",
+    "svg",
+    "webp"
+  ],
+  "author": "Image Processing App",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "."
+  },
+  "bugs": {
+    "url": "."
+  },
+  "homepage": ".",
+  "browserslist": [
+    "last 2 versions",
+    "> 1%",
+    "not dead"
+  ],
+  "files": [
+    "index.html",
+    "css/",
+    "js/",
+    "lib/",
+    "images/",
+    "README.md"
+  ]
+}

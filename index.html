@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Processing Application</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header Section -->
+        <header class="app-header">
+            <h1>Image Processing Application</h1>
+            <nav class="header-nav">
+                <button id="uploadBtn" class="nav-btn">📁 Upload Image</button>
+                <button id="exportBtn" class="nav-btn" disabled>💾 Export</button>
+                <button id="settingsBtn" class="nav-btn">⚙️ Settings</button>
+                <button id="helpBtn" class="nav-btn">❓ Help</button>
+            </nav>
+        </header>
+
+        <!-- Format Support Indicator -->
+        <div class="format-support">
+            <span>Supported formats: PNG, JPEG, JPG, BMP, GIF, SVG, WebP, HEIF</span>
+        </div>
+
+        <!-- Dual Image Display -->
+        <main class="image-display">
+            <div class="image-panel original-panel">
+                <h2>Original Image</h2>
+                <div class="image-container">
+                    <canvas id="originalCanvas" class="image-canvas"></canvas>
+                    <div id="originalDropZone" class="drop-zone">
+                        <p>Drop image here or click Upload Image button</p>
+                        <p class="format-hint">Supports: PNG, JPEG, BMP, GIF, SVG, WebP, HEIF</p>
+                    </div>
+                </div>
+                <div class="image-info">
+                    <div class="info-item">Format: <span id="originalFormat">-</span></div>
+                    <div class="info-item">Size: <span id="originalSize">-</span></div>
+                    <div class="info-item">Dimensions: <span id="originalDimensions">-</span></div>
+                </div>
+            </div>
+
+            <div class="image-panel result-panel">
+                <h2>Processed Result</h2>
+                <div class="image-container">
+                    <canvas id="processedCanvas" class="image-canvas"></canvas>
+                    <div id="processedPlaceholder" class="placeholder">
+                        <p>Processed image will appear here</p>
+                    </div>
+                </div>
+                <div class="image-info">
+                    <div class="info-item">Format: <span id="processedFormat">-</span></div>
+                    <div class="info-item">Size: <span id="processedSize">-</span></div>
+                    <div class="info-item">Dimensions: <span id="processedDimensions">-</span></div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Processing Controls -->
+        <section class="processing-controls">
+            <h2>Processing Controls</h2>
+            
+            <!-- Compression Controls -->
+            <div class="control-section compression-section">
+                <h3>🗜️ Compression</h3>
+                <div class="control-group">
+                    <div class="slider-container">
+                        <label for="qualitySlider">Quality:</label>
+                        <input type="range" id="qualitySlider" min="1" max="100" value="85" class="quality-slider">
+                        <span id="qualityValue">85%</span>
+                    </div>
+                    <div class="size-info">
+                        <span>Estimated size: <span id="estimatedSize">-</span></span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label for="formatSelect">Export Format:</label>
+                    <select id="formatSelect" class="format-select">
+                        <option value="jpeg">JPEG</option>
+                        <option value="png">PNG</option>
+                        <option value="webp">WebP</option>
+                    </select>
+                    <button id="applyCompressionBtn" class="action-btn" disabled>Apply Compression</button>
+                </div>
+            </div>
+
+            <!-- Rotation Controls -->
+            <div class="control-section rotation-section">
+                <h3>🔄 Rotation</h3>
+                <div class="control-group">
+                    <button id="rotate90Btn" class="rotation-btn" disabled>90°</button>
+                    <button id="rotate180Btn" class="rotation-btn" disabled>180°</button>
+                    <button id="rotate270Btn" class="rotation-btn" disabled>270°</button>
+                    <button id="resetRotationBtn" class="action-btn" disabled>↩️ Reset</button>
+                </div>
+            </div>
+
+            <!-- Future Features Placeholder -->
+            <div class="control-section future-features">
+                <h3>🌟 Future Features</h3>
+                <div class="control-group">
+                    <button class="feature-btn" disabled>🎨 Filters</button>
+                    <button class="feature-btn" disabled>✂️ Crop</button>
+                    <button class="feature-btn" disabled>🔍 Resize</button>
+                    <button class="feature-btn" disabled>🌟 Effects</button>
+                    <button class="feature-btn" disabled>More...</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Processing Pipeline -->
+        <section class="processing-pipeline">
+            <h2>Processing Pipeline</h2>
+            
+            <!-- Step History -->
+            <div class="pipeline-section">
+                <h3>📋 Step History</h3>
+                <div id="stepHistory" class="step-history">
+                    <div class="step-item placeholder-step">
+                        <span class="step-number">1.</span>
+                        <span class="step-status">⏳</span>
+                        <span class="step-description">Ready for first operation</span>
+                    </div>
+                </div>
+                
+                <!-- Pipeline Controls -->
+                <div class="pipeline-controls">
+                    <button id="undoBtn" class="pipeline-btn" disabled>↶ Undo Last</button>
+                    <button id="redoBtn" class="pipeline-btn" disabled>↷ Redo</button>
+                    <button id="clearAllBtn" class="pipeline-btn" disabled>🗑️ Clear All</button>
+                    <button id="savePipelineBtn" class="pipeline-btn" disabled>💾 Save Pipeline</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Export Options -->
+        <section class="export-options">
+            <h2>Export Options</h2>
+            
+            <div class="export-section">
+                <div class="export-controls">
+                    <div class="control-group">
+                        <label for="exportFormatSelect">Export Format:</label>
+                        <select id="exportFormatSelect" class="format-select">
+                            <option value="jpeg">JPEG</option>
+                            <option value="png">PNG</option>
+                            <option value="webp">WebP</option>
+                            <option value="bmp">BMP</option>
+                        </select>
+                        
+                        <div class="quality-container">
+                            <label for="exportQualitySlider">Quality:</label>
+                            <input type="range" id="exportQualitySlider" min="1" max="100" value="90" class="quality-slider">
+                            <span id="exportQualityValue">90%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="filenameInput">Filename:</label>
+                        <input type="text" id="filenameInput" class="filename-input" placeholder="processed_image" disabled>
+                        <span class="file-extension" id="fileExtension">.jpg</span>
+                    </div>
+                    
+                    <div class="export-actions">
+                        <button id="downloadBtn" class="export-btn" disabled>💾 Download</button>
+                        <button id="savePipelineExportBtn" class="export-btn" disabled>📤 Save Pipeline</button>
+                        <button id="shareLinkBtn" class="export-btn" disabled>🔗 Share Link</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Loading Indicator -->
+        <div id="loadingIndicator" class="loading-indicator hidden">
+            <div class="loading-spinner"></div>
+            <p id="loadingText">Processing...</p>
+        </div>
+
+        <!-- File Input (Hidden) -->
+        <input type="file" id="fileInput" accept="image/*" style="display: none;">
+    </div>
+
+    <!-- External Libraries -->
+    <script src="lib/heic2any.min.js"></script>
+    <script src="lib/svg.min.js"></script>
+    
+    <!-- JavaScript Modules -->
+    <script src="js/formatHandler.js"></script>
+    <script src="js/imageProcessor.js"></script>
+    <script src="js/processingPipeline.js"></script>
+    <script src="js/uiController.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
