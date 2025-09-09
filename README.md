@@ -460,10 +460,11 @@ Format Detection → Canvas Processing → Side-by-side View → Step History
 
 ## Testing
 
-The application includes 15 sample JPG images in the `images/` directory for testing:
-- File sizes: ~4-5MB each
-- Various dimensions and content
-- Suitable for testing compression and rotation features
+The application includes an empty `images/` directory for your test images:
+- Add your own images (any supported format) to the `images/` folder for testing
+- Supported formats: JPEG, PNG, BMP, GIF, SVG, WebP, HEIF
+- Your personal images won't be committed to the repository (they're in .gitignore)
+- Recommended: Various file sizes and formats for comprehensive testing
 
 ## Future Enhancements
 

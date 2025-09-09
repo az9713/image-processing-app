@@ -4,6 +4,27 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Images - exclude user's personal images
+images/*.jpg
+images/*.jpeg
+images/*.JPG
+images/*.JPEG
+images/*.png
+images/*.PNG
+images/*.gif
+images/*.GIF
+images/*.bmp
+images/*.BMP
+images/*.webp
+images/*.WEBP
+images/*.svg
+images/*.SVG
+images/*.heic
+images/*.HEIF
+
+# Private/ignore folders
+.ignore/
+
 # Operating System Files
 .DS_Store
 .DS_Store?
