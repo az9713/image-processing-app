@@ -1,0 +1,162 @@
+name: Test Image Processing App
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [16, 18, 20]
+        
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        
+    - name: Install test dependencies
+      run: |
+        npm install -g http-server
+        
+    - name: Verify project structure
+      run: |
+        echo "🔍 Verifying project structure..."
+        
+        # Check required directories
+        test -d css && echo "✅ css/ directory exists" || (echo "❌ Missing css/ directory" && exit 1)
+        test -d js && echo "✅ js/ directory exists" || (echo "❌ Missing js/ directory" && exit 1)
+        test -d lib && echo "✅ lib/ directory exists" || (echo "❌ Missing lib/ directory" && exit 1)
+        test -d images && echo "✅ images/ directory exists" || (echo "❌ Missing images/ directory" && exit 1)
+        
+        # Check required files
+        test -f index.html && echo "✅ index.html exists" || (echo "❌ Missing index.html" && exit 1)
+        test -f README.md && echo "✅ README.md exists" || (echo "❌ Missing README.md" && exit 1)
+        test -f package.json && echo "✅ package.json exists" || (echo "❌ Missing package.json" && exit 1)
+        
+    - name: Validate HTML structure
+      run: |
+        echo "🔍 Validating HTML structure..."
+        
+        # Check for essential HTML elements
+        grep -q "<!DOCTYPE html>" index.html && echo "✅ Valid DOCTYPE" || (echo "❌ Invalid or missing DOCTYPE" && exit 1)
+        grep -q "<html.*lang=" index.html && echo "✅ Language attribute present" || echo "⚠️ Language attribute missing"
+        grep -q "<meta.*viewport" index.html && echo "✅ Viewport meta tag present" || echo "⚠️ Viewport meta tag missing"
+        grep -q "<title>" index.html && echo "✅ Title tag present" || (echo "❌ Title tag missing" && exit 1)
+        
+        # Check for required application elements
+        grep -q 'id="uploadBtn"' index.html && echo "✅ Upload button present" || (echo "❌ Upload button missing" && exit 1)
+        grep -q 'id="originalCanvas"' index.html && echo "✅ Original canvas present" || (echo "❌ Original canvas missing" && exit 1)
+        grep -q 'id="processedCanvas"' index.html && echo "✅ Processed canvas present" || (echo "❌ Processed canvas missing" && exit 1)
+        grep -q 'id="qualitySlider"' index.html && echo "✅ Quality slider present" || (echo "❌ Quality slider missing" && exit 1)
+        
+    - name: Validate CSS
+      run: |
+        echo "🔍 Validating CSS..."
+        
+        test -f css/styles.css && echo "✅ Main stylesheet exists" || (echo "❌ Main stylesheet missing" && exit 1)
+        
+        # Check for essential CSS classes
+        grep -q "\.app-container" css/styles.css && echo "✅ App container styles present" || echo "⚠️ App container styles missing"
+        grep -q "\.image-display" css/styles.css && echo "✅ Image display styles present" || echo "⚠️ Image display styles missing"
+        grep -q "\.processing-controls" css/styles.css && echo "✅ Processing control styles present" || echo "⚠️ Processing control styles missing"
+        
+        # Check for responsive design
+        grep -q "@media" css/styles.css && echo "✅ Responsive design present" || echo "⚠️ No responsive design detected"
+        
+    - name: Validate JavaScript
+      run: |
+        echo "🔍 Validating JavaScript..."
+        
+        # Check all JavaScript files exist
+        required_js_files=("app.js" "formatHandler.js" "imageProcessor.js" "processingPipeline.js" "uiController.js")
+        
+        for file in "${required_js_files[@]}"; do
+          if test -f "js/$file"; then
+            echo "✅ js/$file exists"
+            # Basic syntax check
+            node -c "js/$file" && echo "  ✅ Syntax valid" || (echo "  ❌ Syntax error in js/$file" && exit 1)
+          else
+            echo "❌ Missing js/$file"
+            exit 1
+          fi
+        done
+        
+        # Check for required JavaScript classes/functions
+        grep -q "class.*App" js/app.js && echo "✅ Main app class found" || echo "⚠️ Main app class not found"
+        grep -q "class.*FormatHandler" js/formatHandler.js && echo "✅ Format handler class found" || echo "⚠️ Format handler class not found"
+        grep -q "class.*ImageProcessor" js/imageProcessor.js && echo "✅ Image processor class found" || echo "⚠️ Image processor class not found"
+        
+    - name: Test server startup
+      run: |
+        echo "🔍 Testing server startup..."
+        
+        # Start HTTP server in background
+        http-server . -p 8080 -s &
+        SERVER_PID=$!
+        
+        # Wait for server to start
+        sleep 3
+        
+        # Test if server is responding
+        if curl -f -s http://localhost:8080/ > /dev/null; then
+          echo "✅ Server started successfully"
+          
+          # Test if main page loads
+          if curl -f -s http://localhost:8080/ | grep -q "Image Processing Application"; then
+            echo "✅ Main page loads correctly"
+          else
+            echo "❌ Main page content not found"
+            kill $SERVER_PID
+            exit 1
+          fi
+          
+          # Test if resources are accessible
+          curl -f -s http://localhost:8080/css/styles.css > /dev/null && echo "✅ CSS accessible" || echo "⚠️ CSS not accessible"
+          curl -f -s http://localhost:8080/js/app.js > /dev/null && echo "✅ JavaScript accessible" || echo "⚠️ JavaScript not accessible"
+          
+        else
+          echo "❌ Server failed to start or not responding"
+          kill $SERVER_PID
+          exit 1
+        fi
+        
+        # Clean up
+        kill $SERVER_PID
+        
+    - name: Check documentation
+      run: |
+        echo "🔍 Checking documentation..."
+        
+        # Check README content
+        grep -q "Image Processing Application" README.md && echo "✅ README has project title" || echo "⚠️ README missing project title"
+        grep -q "Installation" README.md && echo "✅ README has installation instructions" || echo "⚠️ README missing installation instructions"
+        grep -q "Usage" README.md && echo "✅ README has usage instructions" || echo "⚠️ README missing usage instructions"
+        
+        # Check for installation scripts
+        test -f install.sh && echo "✅ Linux/macOS install script present" || echo "⚠️ Linux/macOS install script missing"
+        test -f install.bat && echo "✅ Windows install script present" || echo "⚠️ Windows install script missing"
+        
+    - name: Generate test report
+      run: |
+        echo "📊 Test Report" >> $GITHUB_STEP_SUMMARY
+        echo "==============" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Node.js Version**: ${{ matrix.node-version }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Test Status**: ✅ Passed" >> $GITHUB_STEP_SUMMARY
+        echo "**Test Date**: $(date)" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Files Tested:" >> $GITHUB_STEP_SUMMARY
+        echo "- HTML structure and required elements" >> $GITHUB_STEP_SUMMARY
+        echo "- CSS stylesheets and responsive design" >> $GITHUB_STEP_SUMMARY
+        echo "- JavaScript syntax and core classes" >> $GITHUB_STEP_SUMMARY
+        echo "- Server startup and resource accessibility" >> $GITHUB_STEP_SUMMARY
+        echo "- Documentation completeness" >> $GITHUB_STEP_SUMMARY
