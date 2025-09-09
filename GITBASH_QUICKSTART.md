@@ -2,6 +2,10 @@
 
 ## 🚀 Running the Image Processing App in Git Bash on Windows
 
+**✅ STATUS: Repository is already deployed and live!**
+
+🌐 **Live Demo**: https://az9713.github.io/image-processing-app (no setup required!)
+
 **Git Bash is perfect for this application!** It provides Unix-like commands on Windows, making the setup process smooth and familiar.
 
 ### ⚡ Super Quick Start (2 minutes)

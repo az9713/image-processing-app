@@ -33,12 +33,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "."
+    "url": "https://github.com/az9713/image-processing-app.git"
   },
   "bugs": {
-    "url": "."
+    "url": "https://github.com/az9713/image-processing-app/issues"
   },
-  "homepage": ".",
+  "homepage": "https://az9713.github.io/image-processing-app",
   "browserslist": [
     "last 2 versions",
     "> 1%",
